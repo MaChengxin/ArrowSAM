@@ -10,6 +10,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 %post
     echo "Hello from inside the container"
     sed -i 's/$/ universe/' /etc/apt/sources.list
+    echo "deb http://nl.archive.ubuntu.com/ubuntu bionic-updates main restricted" >> /etc/apt/sources.list
     apt-get update
     apt-get -y install vim
     apt-get -y update
@@ -50,29 +51,42 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     apt-get install ca-certificates-java
     apt-get install sed
 
-    #rm -r arrow/
-    ##git clone https://github.com/apache/arrow.git
-    git clone --single-branch --branch maint-0.12.x https://github.com/tahashmi/arrow.git
-    #git clone https://github.com/tahashmi/arrow.git
-    cd arrow
-    ##git checkout -b maint-0.12.x
-    cd cpp
-    mkdir release
-    cd release
-    #cd arrow/cpp/release
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DARROW_PARQUET=ON -DARROW_PLASMA=ON -DARROW_PLASMA_JAVA_CLIENT=ON -DARROW_PYTHON=ON
-    make install
+    apt install -y -V lsb-release wget
+    wget https://apache.bintray.com/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+    apt install -y -V ./apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+    apt update
+    apt install -y -V libarrow-dev # For C++
+    apt install -y -V libarrow-glib-dev # For GLib (C)
+    apt install -y -V libarrow-flight-dev # For Flight C++
+    apt install -y -V libplasma-dev # For Plasma C++
+    apt install -y -V libplasma-glib-dev # For Plasma GLib (C)
+    apt install -y -V googletest
+    apt install -y -V libgflags-dev
 
-    cd /arrow/java
-    git submodule update --init --recursive # Needed for flight
-    mvn install -Djavax.net.ssl.trustStorePassword=changeit
 
-    cd /arrow/c_glib
-    ./autogen.sh
-    sed -i '16688 s/^/#/' configure 
-    ./configure
-    make
-    make install
+    # rm -r arrow/
+    # git clone https://github.com/apache/arrow.git
+    # git clone --single-branch --branch maint-0.12.x https://github.com/tahashmi/arrow.git
+    # git clone https://github.com/tahashmi/arrow.git
+    # cd arrow
+    # git checkout -b maint-0.12.x
+    # cd cpp
+    # mkdir release
+    # cd release
+    # cd arrow/cpp/release
+    # cmake .. -DCMAKE_BUILD_TYPE=Release -DARROW_PARQUET=ON -DARROW_PLASMA=ON -DARROW_PLASMA_JAVA_CLIENT=ON -DARROW_PYTHON=ON
+    # make install
+
+    # cd /arrow/java
+    # git submodule update --init --recursive # Needed for flight
+    # mvn install -Djavax.net.ssl.trustStorePassword=changeit
+
+    # cd /arrow/c_glib
+    # ./autogen.sh
+    # sed -i '16688 s/^/#/' configure 
+    # ./configure
+    # make
+    # make install
 
     apt-get clean
 
