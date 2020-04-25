@@ -28,6 +28,10 @@ MirrorURL: http://archive.ubuntu.com/ubuntu/
     apt-get install -y libssl-dev
     apt-get install -y zlib1g-dev
 
+    apt-get install -y locales
+    locale-gen "nl_NL.UTF-8"
+    update-locale LC_ALL="nl_NL.UTF-8"
+
     apt-get clean
 
 %environment
@@ -36,3 +40,4 @@ MirrorURL: http://archive.ubuntu.com/ubuntu/
     export CPATH='/usr/local/include:/usr/lib'
     export PKG_CONFIG_PATH='/usr/local/lib/pkgconfig'
     export LD_LIBRARY_PATH='/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/local/lib'
+    export LC_ALL="nl_NL.UTF-8" # This is needed to let ./arrow-flight-benchmark run
