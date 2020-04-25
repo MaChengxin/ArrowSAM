@@ -11,6 +11,7 @@ MirrorURL: http://archive.ubuntu.com/ubuntu/
     echo "Hello from inside the container"
     
     sed -i 's/$/ universe/' /etc/apt/sources.list
+    echo "deb http://archive.ubuntu.com/ubuntu bionic-updates main restricted" >> /etc/apt/sources.list
     apt-get -y update
     apt-get -y upgrade
     apt-get -y dist-upgrade
@@ -31,6 +32,26 @@ MirrorURL: http://archive.ubuntu.com/ubuntu/
     apt-get install -y locales
     locale-gen "nl_NL.UTF-8"
     update-locale LC_ALL="nl_NL.UTF-8"
+
+    apt-get install -y gdb
+    apt-get install -y net-tools
+
+    apt-get install -y python3
+    apt-get install -y python3-pip
+    pip3 install pyarrow==0.16.0
+    pip3 install pandas
+
+    apt-get install -y libssl-dev
+    apt install -y -V lsb-release wget
+    wget https://apache.bintray.com/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+    apt install -y -V ./apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+    apt update
+    apt install -y -V libarrow-dev=0.16.0-1 # For C++
+    apt install -y -V libarrow-flight-dev=0.16.0-1 # For Flight C++
+    apt install -y -V libarrow-cuda-dev=0.16.0-1 # Dependency for libplasma-dev
+    apt install -y -V libplasma-dev=0.16.0-1 # For Plasma C++
+    apt install -y -V googletest
+    apt install -y -V libgflags-dev
 
     apt-get clean
 
